@@ -1,0 +1,30 @@
+.input {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  width: 300px;
+  padding: 10px 40px;
+}
+
+.iconFind {
+  position: relative;
+  left: 35px;
+  top: 8px;
+  width: 24px;
+  height: 24px;
+  fill: #b2b2b2;
+}
+
+.iconClear {
+  position: relative;
+  right: 35px;
+  top: 8px;
+  width: 24px;
+  height: 24px;
+  fill: #b2b2b2;
+}
+.iconClear:hover {
+  cursor: pointer;
+  fill: #282828;
+}
+
+/*# sourceMappingURL=Search.module.css.map */
