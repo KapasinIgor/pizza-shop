@@ -4,17 +4,19 @@ import Sort from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import PizzaBlock from "../components/PizzaBlock/PizzaBlock";
 import {SearchContext} from "../App";
+import {useSelector, useDispatch} from "react-redux";
+import {setItems} from "../redux/slices/pizzaSlice";
+
 
 function HomePage() {
 
+    const dispatch = useDispatch()
+    const {activeCategory, activeSort} = useSelector(state => state.filter)
+    const items = useSelector(state => state.pizza.items)
+
     const {searchValue} = React.useContext(SearchContext)
-    const [items, setItems] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true)
-    const [activeCategory, setActiveCategory] = React.useState(0)
-    const [activeSort, setActiveSort] = React.useState({
-        name: 'популярности',
-        sortProp: 'rating'
-    })
+
 
     React.useEffect(() => {
         setIsLoading(true)
@@ -27,11 +29,11 @@ function HomePage() {
         fetch(`https://629fcd68461f8173e4f117dd.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}${search}`)
             .then((res) => res.json())
             .then((arr) => {
-                setItems(arr)
+                dispatch(setItems(arr))
                 setIsLoading(false)
             })
         window.scrollTo(0, 0) // что бы при переходе на главную отображался верх страницы
-    }, [activeCategory, activeSort, searchValue])
+    }, [activeCategory, activeSort.sortProp, searchValue])
 
     // Для поиска статичных элементов без помощи бекэнда
     // const pizzas = items.filter((obj) => {
@@ -45,8 +47,8 @@ function HomePage() {
     return (
         <>
             <div className="content__top">
-                <Categories value={activeCategory} onChangeCategory={(i) => setActiveCategory(i)}/>
-                <Sort value={activeSort} onChangeSort={(i) => setActiveSort(i)}/>
+                <Categories />
+                <Sort />
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
