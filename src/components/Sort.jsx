@@ -5,20 +5,11 @@ import {useDispatch, useSelector} from "react-redux";
 function Sort() {
     const dispatch = useDispatch()
     const activeSort = useSelector(state => state.filter.activeSort)
+    const sortList = useSelector(state => state.filter.sortList)
     const [open, setOpen] = React.useState(false)
-
-    const sortList = [
-        {name: 'популярности(по возрастанию)', sortProp: 'rating'},
-        {name: 'популярности(по убыванию)', sortProp: '-rating'},
-        {name: 'цене(по возрастанию)', sortProp: 'price'},
-        {name: 'цене(по убыванию)', sortProp: '-price'},
-        {name: 'алфавиту(по возрастанию)', sortProp: 'title'},
-        {name: 'алфавиту(по убыванию)', sortProp: '-title'}
-    ]
 
     const onClickSortList = (listObj) => {
         dispatch(setActiveSort(listObj))
-        console.log(listObj)
         setOpen(false)
     }
 
@@ -47,7 +38,7 @@ function Sort() {
                                 <li
                                     key={i}
                                     onClick={() => onClickSortList(listObj)}
-                                    className={activeSort.sortProp === listObj.sortProp ? 'active' : ''}
+                                    className={activeSort.sortProperty === listObj.sortProperty ? 'active' : ''}
                                 >
                                     {listObj.name}
                                 </li>

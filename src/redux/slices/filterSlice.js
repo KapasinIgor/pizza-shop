@@ -4,8 +4,16 @@ const initialState = {
     activeCategory: 0,
     activeSort: {
         name: 'популярности',
-        sortProp: 'rating'
-    }
+        sortProperty: 'rating'
+    },
+    sortList: [
+        {name: 'популярности(по возрастанию)', sortProperty: 'rating'},
+        {name: 'популярности(по убыванию)', sortProperty: '-rating'},
+        {name: 'цене(по возрастанию)', sortProperty: 'price'},
+        {name: 'цене(по убыванию)', sortProperty: '-price'},
+        {name: 'алфавиту(по возрастанию)', sortProperty: 'title'},
+        {name: 'алфавиту(по убыванию)', sortProperty: '-title'}
+    ]
 }
 
 export const filterSlice = createSlice({
@@ -17,11 +25,15 @@ export const filterSlice = createSlice({
         },
         setActiveSort: (state, action) => {
             state.activeSort = action.payload
+        },
+        setFilters: (state, action) => {
+            state.activeSort = action.payload.sort
+            console.log(action.payload)
+            state.activeCategory = Number(action.payload.activeCategory)
         }
     },
 })
 
-// Action creators are generated for each case reducer function
-export const { setActiveCategory, setActiveSort } = filterSlice.actions
+export const { setActiveCategory, setActiveSort, setFilters } = filterSlice.actions
 
 export default filterSlice.reducer
