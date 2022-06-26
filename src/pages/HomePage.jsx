@@ -5,37 +5,35 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import PizzaBlock from "../components/PizzaBlock/PizzaBlock";
 import {SearchContext} from "../App";
 import {useSelector, useDispatch} from "react-redux";
-import {setItems} from "../redux/slices/pizzaSlice";
 import {setFilters} from "../redux/slices/filterSlice"
-import axios from 'axios'
-import qs from 'qs'
+import {fetchPizzas} from "../redux/slices/pizzaSlice";
 import {useNavigate} from 'react-router-dom'
+import qs from 'qs'
 
 
 function HomePage() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const {activeCategory, activeSort, sortList} = useSelector(state => state.filter)
-    const items = useSelector(state => state.pizza.items)
-    const isSearch = React.useRef(false)
     const isMounted = React.useRef(false)
+    const isSearch = React.useRef(false)
+    const {items, status} = useSelector(state => state.pizza)
+    const {activeCategory, activeSort, sortList} = useSelector(state => state.filter)
     const {searchValue} = React.useContext(SearchContext)
-    const [isLoading, setIsLoading] = React.useState(true)
 
-    const fetchPizzas = () => {
-        setIsLoading(true)
+    const getPizzas = async () => {
 
         const sortBy = activeSort.sortProperty.replace('-', '')
         const order = activeSort.sortProperty.includes('-') ? 'desc' : 'ask'
         const category = activeCategory > 0 ? `category=${activeCategory}` : ''
         const search = searchValue ? `&search=${searchValue}` : '' //поиск работает если не выбрана категория - особенность mockApi, на нормальном бэке будет норм.
 
-        axios
-            .get(`https://629fcd68461f8173e4f117dd.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}${search}`)
-            .then((res) => {
-                dispatch(setItems(res.data))
-                setIsLoading(false)
-            })
+        dispatch(fetchPizzas({
+            sortBy,
+            order,
+            category,
+            search
+        }))
+        window.scrollTo(0, 0)
     }
 
     // Если был первый рендер, то проверяем url-параметры и сохраняем в редаксе
@@ -57,7 +55,7 @@ function HomePage() {
     React.useEffect(() => {
         window.scrollTo(0, 0)
         if (!isSearch.current) {
-            fetchPizzas()
+            getPizzas()
         }
         isSearch.current = false
     }, [activeCategory, activeSort.sortProperty, searchValue])
@@ -75,7 +73,6 @@ function HomePage() {
     }, [activeCategory, activeSort.sortProperty])
 
 
-
     const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
     const skeletons = [...new Array(6)].map((_, i) => <Skeleton key={i}/>)
 
@@ -86,9 +83,20 @@ function HomePage() {
                 <Sort/>
             </div>
             <h2 className="content__title">Все пиццы</h2>
-            <div className="content__items">
-                {isLoading ? skeletons : pizzas}
-            </div>
+            {
+                status === 'error' ? (
+                    <div>
+                        <h2>Пиццы отсутствуют <icon>😕</icon></h2>
+                        <p>
+                            Произошла ошибка при получении пицц с сервера. Проверьте соединение с интернетом.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="content__items">
+                        {status === 'loading' ? skeletons : pizzas}
+                    </div>
+                )
+            }
         </>
     )
 }

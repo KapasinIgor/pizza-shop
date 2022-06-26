@@ -28,7 +28,6 @@ export const filterSlice = createSlice({
         },
         setFilters: (state, action) => {
             state.activeSort = action.payload.sort
-            console.log(action.payload)
             state.activeCategory = Number(action.payload.activeCategory)
         }
     },
