@@ -3,11 +3,10 @@ import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import PizzaBlock from "../components/PizzaBlock/PizzaBlock";
-import {SearchContext} from "../App";
 import {useSelector, useDispatch} from "react-redux";
 import {setFilters} from "../redux/slices/filterSlice"
 import {fetchPizzas} from "../redux/slices/pizzaSlice";
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import qs from 'qs'
 
 
@@ -17,8 +16,7 @@ function HomePage() {
     const isMounted = React.useRef(false)
     const isSearch = React.useRef(false)
     const {items, status} = useSelector(state => state.pizza)
-    const {activeCategory, activeSort, sortList} = useSelector(state => state.filter)
-    const {searchValue} = React.useContext(SearchContext)
+    const {activeCategory, activeSort, sortList, searchValue} = useSelector(state => state.filter)
 
     const getPizzas = async () => {
 
@@ -73,7 +71,11 @@ function HomePage() {
     }, [activeCategory, activeSort.sortProperty])
 
 
-    const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
+    const pizzas = items.map((obj) => (
+        <Link key={obj.id} to={`/pizza/${obj.id}`}>
+            <PizzaBlock {...obj} />
+        </Link>
+    ))
     const skeletons = [...new Array(6)].map((_, i) => <Skeleton key={i}/>)
 
     return (
